@@ -26,3 +26,5 @@ pnpm dev
 - Health check: http://localhost:4000/api/health
 
 Đọc [docs/architecture.md](docs/architecture.md) để biết thứ tự tự xây các module.
+
+Người chuẩn bị phim đọc [docs/movie-data-preparation.md](docs/movie-data-preparation.md) trước khi bàn giao dữ liệu.

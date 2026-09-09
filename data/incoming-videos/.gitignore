@@ -1,0 +1,4 @@
+# Keep this folder visible in Git, but never commit movie files or other prepared media.
+*
+!.gitignore
+!README.md

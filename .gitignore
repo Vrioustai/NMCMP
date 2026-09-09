@@ -7,3 +7,6 @@ dist/
 coverage/
 *.log
 prisma/*.db
+data/incoming-videos/*
+!data/incoming-videos/.gitignore
+!data/incoming-videos/README.md
