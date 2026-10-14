@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FilmGenZ - Thông báo (Phim mới, Hệ thống, Cộng đồng)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070b12;
+    --board: #0d1015;
+    --card: #0e141d;
+    --line: #1f2733;
+    --text: #f3f5f7;
+    --muted: #9ba4b0;
+    --dim: #6f7783;
+    --yellow: #ffd21c;
+    --orange: #ffb11a;
+    --dark: #151107;
+    --green: #35d07f;
+    --red: #ff4d5e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--board);
+    color: var(--text);
+    font-family: 'Be Vietnam Pro', 'Segoe UI', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .board {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 80px;
+    padding: 60px;
+    min-width: max-content;
+  }
+
+  /* ---------- Khung màn hình ---------- */
+  .screen {
+    width: 430px;
+    background: var(--bg);
+    padding: 20px 16px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* ---------- Header + menu chip ---------- */
+  .header { display: flex; align-items: center; gap: 10px; }
+  .back {
+    width: 36px; height: 36px; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--line);
+    font-size: 20px; font-weight: 700; color: var(--text);
+  }
+  .title { flex: 1; display: flex; align-items: center; gap: 8px; }
+  .title h1 { font-size: 20px; font-weight: 800; }
+  .badge {
+    width: 22px; height: 22px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(90deg, var(--yellow), var(--orange));
+    color: var(--dark); font-size: 11px; font-weight: 700;
+  }
+  .read-all { font-size: 11.5px; font-weight: 600; color: var(--yellow); }
+
+  .menu { display: flex; gap: 8px; }
+  .chip {
+    padding: 8px 14px; border-radius: 16px;
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+  }
+  .chip.on {
+    background: linear-gradient(90deg, var(--yellow), var(--orange));
+    border-color: transparent;
+    color: var(--dark); font-weight: 700;
+  }
+
+  .label { font-size: 11px; font-weight: 600; color: var(--dim); }
+
+  /* ---------- Thẻ chung ---------- */
+  .card {
+    position: relative;
+    display: flex; gap: 12px;
+    padding: 14px;
+    border-radius: 18px;
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+  .card.unread {
+    padding-right: 30px;
+    background: linear-gradient(90deg, rgba(255,210,28,0.16), rgba(255,210,28,0.03));
+    border-color: rgba(255,210,28,0.4);
+  }
+  .card .dot {
+    position: absolute; top: 14px; right: 14px;
+    width: 8px; height: 8px; border-radius: 4px;
+    background: var(--yellow);
+    box-shadow: 0 0 6px rgba(255,210,28,0.8);
+  }
+  .icon {
+    width: 44px; height: 44px; border-radius: 14px; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .icon.yellow { background: rgba(255,210,28,0.22); }
+  .icon.green  { background: rgba(53,208,127,0.22); }
+  .icon.blue   { background: rgba(138,164,200,0.22); }
+  .body { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .body h3 { font-size: 13px; font-weight: 700; line-height: 18px; }
+  .body p  { font-size: 12px; font-weight: 400; line-height: 17px; color: var(--muted); }
+  .meta { font-size: 10.5px; color: var(--dim); }
+
+  .hero {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 18px; border-radius: 22px;
+    background: linear-gradient(90deg, #3a2e0a, #0e1420);
+    border: 1px solid rgba(255,210,28,0.28);
+  }
+  .tag {
+    align-self: flex-start;
+    padding: 3px 8px; border-radius: 8px;
+    font-size: 10px; font-weight: 600; color: var(--yellow);
+    background: rgba(255,210,28,0.14);
+    border: 1px solid rgba(255,210,28,0.4);
+  }
+  .tag.live { color: #fff; background: var(--red); border-color: var(--red); }
+  .tags { display: flex; gap: 6px; }
+
+  .btn-row { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 11px 20px; border-radius: 20px;
+    font-size: 12.5px; font-weight: 600; color: var(--text);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--line);
+  }
+  .btn.primary {
+    background: linear-gradient(90deg, var(--yellow), var(--orange));
+    border-color: transparent; color: var(--dark); font-weight: 700;
+  }
+  .btn.wide {
+    display: flex; align-items: center; justify-content: center;
+    height: 44px; padding: 0; border-radius: 22px; font-size: 13.5px;
+  }
+
+  /* ---------- Phim mới ---------- */
+  .film-name { font-size: 24px; font-weight: 800; line-height: 30px; }
+  .film-name span { display: block; color: var(--yellow); }
+  .film-meta { font-size: 11.5px; color: var(--muted); }
+  .film { align-items: center; padding: 12px 14px 12px 12px; }
+  .poster {
+    width: 56px; height: 72px; border-radius: 12px; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .poster.p1 { background: linear-gradient(90deg, #7a1f2b, #2a1030); }
+  .poster.p2 { background: linear-gradient(90deg, #1e5d9c, #0f2540); }
+  .poster.p3 { background: linear-gradient(90deg, #2f7a45, #12301c); }
+  .film .body { gap: 6px; }
+
+  /* ---------- Hệ thống ---------- */
+  .status {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px; border-radius: 16px;
+    background: rgba(53,208,127,0.1);
+    border: 1px solid rgba(53,208,127,0.35);
+  }
+  .status .pulse {
+    width: 8px; height: 8px; border-radius: 4px; background: var(--green);
+    box-shadow: 0 0 6px rgba(53,208,127,0.8); flex: none;
+  }
+  .status .body { gap: 2px; }
+  .status .body p { font-size: 11.5px; line-height: 16px; }
+  .maint {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 18px; border-radius: 20px;
+    background: linear-gradient(90deg, rgba(255,177,26,0.22), rgba(255,177,26,0.05));
+    border: 1px solid rgba(255,177,26,0.45);
+  }
+  .maint .kicker { font-size: 11px; font-weight: 600; color: var(--yellow); }
+  .maint h2 { font-size: 16px; font-weight: 800; line-height: 22px; }
+  .maint p  { font-size: 11.5px; line-height: 16px; color: var(--muted); }
+  .countdown { display: flex; gap: 10px; }
+  .unit {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 10px 8px; border-radius: 12px;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,177,26,0.3);
+  }
+  .unit b { font-size: 22px; font-weight: 800; }
+  .unit span { font-size: 10px; color: var(--dim); }
+
+  /* ---------- Cộng đồng ---------- */
+  .live-title { font-size: 16px; font-weight: 800; }
+  .live-desc { font-size: 12px; line-height: 17px; color: var(--muted); }
+  .viewers { display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--muted); }
+  .avatars { display: flex; }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 15px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--dark);
+    border: 1px solid var(--bg);
+  }
+  .avatars .avatar + .avatar { margin-left: -8px; }
+  .avatar.lg { width: 36px; height: 36px; border-radius: 18px; font-size: 14px; flex: none; }
+  .a-y { background: #ffb11a; } .a-p { background: #ff7a9c; }
+  .a-b { background: #6aa8ff; } .a-g { background: #35d07f; }
+  .quote {
+    display: flex; gap: 8px; padding: 8px 10px 8px 8px; border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    font-size: 11.5px; line-height: 16px; color: var(--muted);
+  }
+  .quote i { width: 3px; border-radius: 2px; background: var(--yellow); flex: none; }
+  .body .who { font-size: 12.5px; font-weight: 400; line-height: 18px; color: var(--text); }
+  .body .who b { font-weight: 700; }
+  .heart { font-size: 16px; color: var(--dim); }
+</style>
+</head>
+<body>
+<main class="board">
+
+  <!-- ================= TB PHIM MỚI ================= -->
+  <section class="screen" id="tb-phim-moi">
+    <div class="header">
+      <div class="back">‹</div>
+      <div class="title"><h1>Thông báo</h1><div class="badge">3</div></div>
+      <div class="read-all">Đánh dấu đã đọc</div>
+    </div>
+    <div class="menu">
+      <div class="chip">Tất cả</div>
+      <div class="chip on">Phim mới</div>
+      <div class="chip">Hệ thống</div>
+      <div class="chip">Cộng đồng</div>
+    </div>
+
+    <div class="hero">
+      <div class="tag">Vừa lên kệ hôm nay</div>
+      <div class="film-name">Demon Slayer<span>Vô Hạn Thành</span></div>
+      <div class="film-meta">★ 9.4 · 2025 · Hành động · Phụ đề Việt</div>
+      <div class="btn-row">
+        <div class="btn primary">▶ Xem ngay</div>
+        <div class="btn">+ Danh sách</div>
+      </div>
+    </div>
+
+    <div class="label">Mới thêm tuần này</div>
+
+    <div class="card film">
+      <div class="poster p1">🔥</div>
+      <div class="body">
+        <h3>Jujutsu Kaisen 0</h3>
+        <div class="tags"><div class="tag">Lồng tiếng</div><div class="tag">HD</div></div>
+        <div class="meta">Thêm 2 giờ trước</div>
+      </div>
+    </div>
+    <div class="card film">
+      <div class="poster p2">☁️</div>
+      <div class="body">
+        <h3>Your Name - Tên Cậu Là Gì?</h3>
+        <div class="tags"><div class="tag">Phụ đề mới</div></div>
+        <div class="meta">Cập nhật hôm qua</div>
+      </div>
+    </div>
+    <div class="card film">
+      <div class="poster p3">🌿</div>
+      <div class="body">
+        <h3>Spirited Away</h3>
+        <div class="tags"><div class="tag">Bản đẹp 4K</div><div class="tag">Phụ đề Việt</div></div>
+        <div class="meta">Thêm 2 ngày trước</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TB HỆ THỐNG ================= -->
+  <section class="screen" id="tb-he-thong">
+    <div class="header">
+      <div class="back">‹</div>
+      <div class="title"><h1>Thông báo</h1><div class="badge">3</div></div>
+      <div class="read-all">Đánh dấu đã đọc</div>
+    </div>
+    <div class="menu">
+      <div class="chip">Tất cả</div>
+      <div class="chip">Phim mới</div>
+      <div class="chip on">Hệ thống</div>
+      <div class="chip">Cộng đồng</div>
+    </div>
+
+    <div class="status">
+      <div class="pulse"></div>
+      <div class="body">
+        <h3>Mọi dịch vụ đang hoạt động</h3>
+        <p>Phát phim, tìm kiếm và đăng nhập đều bình thường.</p>
+      </div>
+    </div>
+
+    <div class="maint">
+      <div class="kicker">Bảo trì sắp tới</div>
+      <h2>Bảo trì máy chủ 02:00 - 03:00 sáng mai</h2>
+      <p>Trong lúc bảo trì, bạn có thể không xem được phim. Tiến độ xem của bạn vẫn được giữ nguyên.</p>
+      <div class="countdown">
+        <div class="unit"><b>12</b><span>giờ</span></div>
+        <div class="unit"><b>34</b><span>phút</span></div>
+        <div class="unit"><b>08</b><span>giây</span></div>
+      </div>
+    </div>
+
+    <div class="label">Cập nhật gần đây</div>
+
+    <div class="card">
+      <div class="icon yellow">✨</div>
+      <div class="body"><h3>Filmgenz 2.4 đã ra mắt</h3><div class="meta">Hôm qua · Cập nhật</div></div>
+    </div>
+    <div class="card">
+      <div class="icon green">🔒</div>
+      <div class="body"><h3>Cập nhật bảo mật tài khoản</h3><div class="meta">3 ngày trước · Bảo mật</div></div>
+    </div>
+    <div class="card">
+      <div class="icon blue">📄</div>
+      <div class="body"><h3>Điều khoản sử dụng được làm rõ</h3><div class="meta">4 ngày trước · Chính sách</div></div>
+    </div>
+  </section>
+
+  <!-- ================= TB CỘNG ĐỒNG ================= -->
+  <section class="screen" id="tb-cong-dong">
+    <div class="header">
+      <div class="back">‹</div>
+      <div class="title"><h1>Thông báo</h1><div class="badge">3</div></div>
+      <div class="read-all">Đánh dấu đã đọc</div>
+    </div>
+    <div class="menu">
+      <div class="chip">Tất cả</div>
+      <div class="chip">Phim mới</div>
+      <div class="chip">Hệ thống</div>
+      <div class="chip on">Cộng đồng</div>
+    </div>
+
+    <div class="hero">
+      <div class="tag live">● Đang chiếu</div>
+      <div class="live-title">Phòng xem chung: Your Name</div>
+      <div class="live-desc">Bạn của bạn là Minh vừa mở phòng, vào xem cùng nhé.</div>
+      <div class="viewers">
+        <div class="avatars">
+          <div class="avatar a-y">M</div><div class="avatar a-p">L</div>
+          <div class="avatar a-b">H</div><div class="avatar a-g">T</div>
+        </div>
+        <span>+20 người đang xem</span>
+      </div>
+      <div class="btn primary wide">▶ Vào phòng ngay</div>
+    </div>
+
+    <div class="label">Tương tác mới</div>
+
+    <div class="card unread">
+      <div class="avatar lg a-p">L</div>
+      <div class="body" style="gap:6px">
+        <p class="who"><b>Lan</b> đã trả lời bình luận của bạn ở phim Spirited Away.</p>
+        <div class="quote"><i></i><span>Đồng ý luôn, cảnh tàu điện đẹp nhất phim!</span></div>
+        <div class="meta">3 giờ trước</div>
+      </div>
+      <div class="dot"></div>
+    </div>
+
+    <div class="card">
+      <div class="avatar lg a-g">T</div>
+      <div class="body" style="gap:4px">
+        <p class="who"><b>Tuấn</b> và 12 người khác đã thích đánh giá của bạn về Jujutsu Kaisen 0.</p>
+        <div class="meta">Hôm qua</div>
+      </div>
+      <div class="heart">♥</div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
