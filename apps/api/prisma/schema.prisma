@@ -70,3 +70,8 @@ model WatchHistory {
   episode   Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
   @@unique([userId, episodeId])
 }
+
+model Broken {
+  id Int @id
+  name
+}
