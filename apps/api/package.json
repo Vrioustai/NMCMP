@@ -10,7 +10,13 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --coverage --passWithNoTests",
     "test:e2e": "jest --config test/jest-e2e.json --runInBand --passWithNoTests",
-    "prisma": "prisma"
+    "prisma": "prisma",
+    "db:reset": "prisma migrate reset --force",
+    "db:seed": "prisma db seed",
+    "db:seed:dev": "tsx prisma/fixtures/dev.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@movie/contracts": "workspace:*",
