@@ -3,28 +3,39 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "nest start --watch",
     "build": "nest build",
+    "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
+    "test": "jest --coverage --passWithNoTests",
+    "test:e2e": "jest --config test/jest-e2e.json --runInBand --passWithNoTests",
     "prisma": "prisma"
   },
   "dependencies": {
-    "@nestjs/common": "^11.0.0",
-    "@nestjs/config": "^4.0.0",
-    "@nestjs/core": "^11.0.0",
-    "@nestjs/platform-express": "^11.0.0",
-    "@prisma/client": "^6.0.0",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
+    "@movie/contracts": "workspace:*",
+    "@nestjs/common": "^11",
+    "@nestjs/config": "^4",
+    "@nestjs/core": "^11",
+    "@nestjs/platform-express": "^11",
+    "@prisma/client": "^6",
+    "class-transformer": "^0.5",
+    "class-validator": "^0.15",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.0",
-    "@nestjs/schematics": "^11.0.0",
-    "@nestjs/testing": "^11.0.0",
-    "@types/node": "^22.0.0",
-    "prisma": "^6.0.0",
-    "typescript": "^5.7.0"
+    "@nestjs/cli": "^11",
+    "@nestjs/schematics": "^11",
+    "@nestjs/testing": "^11",
+    "@types/jest": "^30",
+    "@types/node": "^22",
+    "@types/supertest": "^6",
+    "jest": "^30",
+    "prisma": "^6",
+    "supertest": "^7",
+    "ts-jest": "^29.4",
+    "tsx": "^4",
+    "typescript": "~5.9.0"
   }
 }
