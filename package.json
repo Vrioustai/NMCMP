@@ -17,6 +17,9 @@
     "db:up": "docker compose -f infra/docker-compose.yml up -d",
     "db:down": "docker compose -f infra/docker-compose.yml down",
     "db:migrate": "pnpm --filter @movie/api prisma migrate dev",
+    "db:reset": "pnpm --filter @movie/api db:reset",
+    "db:seed": "pnpm --filter @movie/api db:seed",
+    "db:seed:dev": "pnpm --filter @movie/api db:seed:dev",
     "db:studio": "pnpm --filter @movie/api prisma studio"
   },
   "devDependencies": {
