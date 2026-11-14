@@ -45,7 +45,7 @@ Mỗi màn hình phải có đủ:
 - Trạng thái mặc định, hover, focus, disabled nếu có tương tác.
 - Loading, dữ liệu trống và lỗi hiển thị.
 - Nội dung mẫu đủ dài để phát hiện lỗi tràn chữ.
-- Ghi chú hành vi: cuộn trang, popup, filter, pagination, player hoặc chatbot.
+- Ghi chú hành vi: cuộn trang, popup, filter, pagination, player hoặc lớp Danmaku.
 
 Không chỉ bàn giao ảnh chụp màn hình; cần dùng component, auto layout và style/variables nhất quán để developer đo được kích thước chính xác.
 
@@ -54,7 +54,7 @@ Không chỉ bàn giao ảnh chụp màn hình; cần dùng component, auto layo
 - Khai báo màu, typography, spacing và radius trong `00-Foundations`.
 - Ưu tiên component và variant thay vì copy/paste nhiều phần tử giống nhau.
 - Asset xuất cho web dùng SVG với logo/icon; dùng WebP/JPG cho ảnh raster.
-- Đặt tên asset chữ thường, dùng dấu `-`: `logo-dark.svg`, `chat-empty-state.webp`.
+- Đặt tên asset chữ thường, dùng dấu `-`: `logo-dark.svg`, `search-empty-state.webp`.
 - Không dùng tên mơ hồ: `final.png`, `final-2.png`, `new-button.svg`.
 - Poster phim phải dùng tỉ lệ 2:3; backdrop dùng tỉ lệ 16:9.
 

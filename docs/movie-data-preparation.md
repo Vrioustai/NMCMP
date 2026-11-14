@@ -4,7 +4,7 @@ Tài liệu này dành cho người chuẩn bị dữ liệu trước khi phim �
 
 ## Kho dữ liệu chung của nhóm
 
-Video gốc, poster, backdrop và phụ đề được chia sẻ qua [Google Drive chung của dự án](https://drive.google.com/drive/folders/1FfpAGS87Y028mUEyG0XyWLotrULNpkNQ?usp=drive_link). GitHub chỉ lưu source code, tài liệu và mẫu dữ liệu; không lưu video.
+Video gốc, poster, backdrop và phụ đề được chia sẻ qua Google Drive chung của dự án. Đường dẫn thư mục chỉ gửi trong nhóm, không ghi vào repository vì repository đang công khai. GitHub chỉ lưu source code, tài liệu và mẫu dữ liệu; không lưu video.
 
 Trong Google Drive, dùng các thư mục sau:
 
@@ -16,7 +16,7 @@ NMCMP-Movie-Assets/
 └── templates/         # Mẫu metadata và asset tham khảo
 ```
 
-Mỗi thành viên chỉ tải các phim mình được phân công. Nếu cần cập nhật dữ liệu, upload lại đúng thư mục phim trên Drive; không gửi video qua GitHub, chat hoặc email.
+Mỗi thành viên chỉ tải các phim mình được phân công. Nếu cần cập nhật dữ liệu, upload lại đúng thư mục phim trên Drive; không gửi video qua GitHub, tin nhắn hoặc email.
 
 ## Nơi lưu file tạm thời
 
@@ -168,7 +168,7 @@ Không gửi video qua Git. Người phụ trách kỹ thuật sẽ kiểm tra, 
 
 ## Quy trình làm việc với Google Drive
 
-1. Xem phim được giao trong thư mục `01-incoming/` trên [Google Drive chung](https://drive.google.com/drive/folders/1FfpAGS87Y028mUEyG0XyWLotrULNpkNQ?usp=drive_link).
+1. Xem phim được giao trong thư mục `01-incoming/` trên Google Drive chung.
 2. Tải thư mục phim về máy, kiểm tra video và hoàn thiện `metadata.json`, ảnh, phụ đề nếu được phân công.
 3. Chạy/kiểm tra local bằng bản nằm trong `NMCMP/data/incoming-videos/<slug>/`.
 4. Upload dữ liệu đã hoàn thiện lên đúng thư mục phim trong `02-approved/` trên Drive.
