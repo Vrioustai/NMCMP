@@ -1,6 +1,6 @@
-# Movie Platform
+# FilmGenZ
 
-Monorepo khung cho website xem phim có chatbot tư vấn phim.
+Website xem phim trực tuyến cho người dùng 13–30 tuổi. Điểm khác biệt là Danmaku: bình luận chạy ngang màn hình, gắn với đúng mốc thời gian của video, có kiểm duyệt và bật, tắt được. Tìm kiếm, bộ lọc và mục phim xu hướng giúp chọn phim nhanh hơn.
 
 ## Công nghệ
 
@@ -25,7 +25,7 @@ pnpm dev
 - API: http://localhost:4000
 - Health check: http://localhost:4000/api/health
 
-Đọc [docs/architecture.md](docs/architecture.md) để biết thứ tự tự xây các module.
+Đọc [docs/architecture.md](docs/architecture.md) để biết luồng chính và thứ tự xây 7 module M1–M7.
 
 Người chuẩn bị phim đọc [docs/movie-data-preparation.md](docs/movie-data-preparation.md) trước khi bàn giao dữ liệu.
 

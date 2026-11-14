@@ -38,7 +38,7 @@ Không đưa API key, video, file PSD/AI, hoặc dữ liệu phim dung lượng 
 apps/web/
 ├── app/                 # Route và page của Next.js
 ├── components/          # Component dùng lại
-├── features/            # Component/logic theo nghiệp vụ: movies, auth, chat
+├── features/            # Component/logic theo nghiệp vụ: movies, auth, danmaku
 ├── lib/                 # API client, helper, cấu hình
 └── public/assets/       # Asset tĩnh đã tối ưu
 ```
