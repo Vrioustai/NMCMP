@@ -10,3 +10,7 @@ prisma/*.db
 data/incoming-videos/*
 !data/incoming-videos/.gitignore
 !data/incoming-videos/README.md
+next-env.d.ts
+*.tsbuildinfo
+packages/contracts/dist/
+apps/api/uploads/
