@@ -1,13 +1,14 @@
 "use client";
 
 import type { MovieCard } from "@movie/contracts";
-import { Heart } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { loginNext } from "../../lib/watch-path";
 import { useSession } from "../../lib/session";
 import { AgeBadge } from "./age-badge";
+import { FavoriteButton } from "./favorite-button";
 
 const PREVIEW_DELAY_MS = 600;
 
@@ -16,7 +17,7 @@ function canPreview(url: string | null): url is string {
   return !url.split("?")[0].toLowerCase().endsWith(".m3u8");
 }
 
-function BannerCopy({ movie, favoriteHref }: { movie: MovieCard; favoriteHref: string }) {
+function BannerCopy({ movie, loggedIn }: { movie: MovieCard; loggedIn: boolean }) {
   return (
     <div className="grid justify-items-start gap-3">
       <p className="text-[12px] font-bold tracking-wide text-accent">PHIM MỚI</p>
@@ -25,20 +26,18 @@ function BannerCopy({ movie, favoriteHref }: { movie: MovieCard; favoriteHref: s
         <AgeBadge rating={movie.ageRating} />
         <span>{movie.releaseYear}</span>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Link
           href={`/movies/${movie.slug}`}
           className="inline-flex h-10 items-center justify-center rounded-control bg-linear-to-r from-accent to-accent-2 px-4 text-sm font-semibold text-on-accent shadow-glow"
         >
           Xem ngay
         </Link>
-        <Link
-          href={favoriteHref}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-control border border-line px-4 text-sm font-semibold"
-        >
-          <Heart size={16} />
-          Yêu thích
-        </Link>
+        <FavoriteButton
+          movieId={movie.id}
+          loggedIn={loggedIn}
+          loginHref={loginNext(`/movies/${movie.slug}`)}
+        />
       </div>
     </div>
   );
@@ -73,7 +72,11 @@ export function HeroBanner({ movies }: { movies: MovieCard[] }) {
   }, []);
 
   if (!movie) return null;
-  const favoriteHref = user ? "/me/favorites" : loginNext(`/movies/${movie.slug}`);
+  const loggedIn = user !== null;
+  const step = (direction: number) => {
+    clear();
+    setIndex((current) => (current + direction + movies.length) % movies.length);
+  };
 
   return (
     <section aria-roledescription="carousel" aria-label="Phim mới">
@@ -91,22 +94,39 @@ export function HeroBanner({ movies }: { movies: MovieCard[] }) {
         }}
         onPointerCancel={clear}
       >
-        <div className="relative aspect-[4/5] md:aspect-video lg:aspect-[16/7]">
+        <div className="relative md:aspect-[16/7]">
           {movie.posterUrl ? (
             <Image
               src={movie.posterUrl}
               alt=""
               fill
-              priority={index === 0}
               sizes="100vw"
-              className="object-cover"
+              className="absolute inset-0 hidden scale-110 object-cover blur-2xl md:block"
             />
           ) : (
-            <div className="absolute inset-0 bg-linear-to-br from-raised to-board" />
+            <div className="absolute inset-0 hidden bg-linear-to-br from-raised to-board md:block" />
           )}
+          <div className="absolute inset-0 hidden bg-linear-to-r from-page via-page/75 to-page/25 md:block" />
+          <div className="relative z-10 flex flex-col gap-4 p-4 md:absolute md:inset-0 md:flex-row md:items-center md:p-6">
+            {movie.posterUrl ? (
+              <div className="relative mx-auto aspect-[2/3] w-40 shrink-0 overflow-hidden rounded-card md:mx-0 md:h-[82%] md:w-auto">
+                <Image
+                  src={movie.posterUrl}
+                  alt=""
+                  fill
+                  priority={index === 0}
+                  sizes="280px"
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <div className="aspect-[2/3] w-40 shrink-0 rounded-card bg-linear-to-br from-raised to-board" />
+            )}
+            <BannerCopy movie={movie} loggedIn={loggedIn} />
+          </div>
           {playing && previewUrl ? (
             <video
-              className="absolute inset-0 size-full object-cover"
+              className="absolute inset-0 z-20 size-full object-cover"
               src={previewUrl}
               muted
               playsInline
@@ -116,13 +136,26 @@ export function HeroBanner({ movies }: { movies: MovieCard[] }) {
               aria-hidden
             />
           ) : null}
-          <div className="absolute inset-0 hidden bg-linear-to-t from-page via-page/20 to-transparent md:block" />
-          <div className="absolute inset-x-0 bottom-0 hidden p-6 md:block">
-            <BannerCopy movie={movie} favoriteHref={favoriteHref} />
-          </div>
-        </div>
-        <div className="p-4 md:hidden">
-          <BannerCopy movie={movie} favoriteHref={favoriteHref} />
+          {movies.length > 1 ? (
+            <>
+              <button
+                type="button"
+                aria-label="Phim trước"
+                className="absolute top-1/2 left-3 z-30 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-control bg-page/80 text-ink"
+                onClick={() => step(-1)}
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                type="button"
+                aria-label="Phim sau"
+                className="absolute top-1/2 right-3 z-30 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-control bg-page/80 text-ink"
+                onClick={() => step(1)}
+              >
+                <ChevronRight size={20} />
+              </button>
+            </>
+          ) : null}
         </div>
       </article>
       {movies.length > 1 ? (
@@ -132,13 +165,17 @@ export function HeroBanner({ movies }: { movies: MovieCard[] }) {
               key={item.id}
               type="button"
               aria-label={`Phim ${dot + 1}: ${item.title}`}
-              aria-current={dot === index}
-              className={`size-2 rounded-pill ${dot === index ? "bg-accent" : "bg-raised"}`}
+              aria-current={dot === index ? "true" : undefined}
+              className="inline-flex size-6 items-center justify-center"
               onClick={() => {
                 clear();
                 setIndex(dot);
               }}
-            />
+            >
+              <span
+                className={`size-2 rounded-pill ${dot === index ? "bg-accent" : "bg-raised"}`}
+              />
+            </button>
           ))}
         </div>
       ) : null}
