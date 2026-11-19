@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { ApiError } from "../../lib/api/errors";
 import { apiClient } from "../../lib/api/client";
 import { errorMessage } from "../../lib/error-messages";
-import { clampProgress, refreshDelayMs } from "../../lib/playback";
+import { clampProgress, isHlsPlaylist, refreshDelayMs } from "../../lib/playback";
 import { watchPath } from "../../lib/watch-path";
 import { DanmakuComposer } from "../danmaku/danmaku-composer";
 import { DanmakuLayer, type FlyingComment } from "../danmaku/danmaku-layer";
@@ -20,6 +20,7 @@ import { PlayerControls } from "./player-controls";
 import { ResumeDialog } from "./resume-dialog";
 
 const MANIFEST_TIMEOUT_MS = 3000;
+const FILE_TIMEOUT_MS = 20_000;
 const PROGRESS_EVERY_MS = 10_000;
 
 function saveProgress(episodeId: number, seconds: number): void {
@@ -133,14 +134,15 @@ export function VideoPlayer({
     const giveUp = () => {
       if (!dead) setFailure("play");
     };
-    const useNative = video.canPlayType("application/vnd.apple.mpegurl") !== "";
+    const playlist = isHlsPlaylist(info.hlsUrl);
+    const useNative = playlist && video.canPlayType("application/vnd.apple.mpegurl") !== "";
 
-    if (useNative) {
+    if (!playlist || useNative) {
       timer = window.setTimeout(() => {
         video.removeAttribute("src");
         video.load();
         giveUp();
-      }, MANIFEST_TIMEOUT_MS);
+      }, playlist ? MANIFEST_TIMEOUT_MS : FILE_TIMEOUT_MS);
       const ready = () => window.clearTimeout(timer);
       video.addEventListener("loadedmetadata", ready);
       video.src = info.hlsUrl;
@@ -162,6 +164,7 @@ export function VideoPlayer({
         const player = new Hls({
           manifestLoadingTimeOut: MANIFEST_TIMEOUT_MS,
           manifestLoadingMaxRetry: 0,
+          fragLoadingTimeOut: 90_000,
           startPosition: pendingSeek.current ?? 0,
         });
         hls = player;

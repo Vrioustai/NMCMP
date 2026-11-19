@@ -6,7 +6,6 @@ import { EmptyState } from "../../../../components/ui/empty-state";
 import { apiServer } from "../../../../lib/api/server";
 import { formatDate, formatDuration, formatTime } from "../../../../lib/format";
 import { progressPercent } from "../../../../lib/history-progress";
-import { watchPath } from "../../../../lib/watch-path";
 
 export const metadata = { title: "Lịch sử xem" };
 
@@ -45,7 +44,7 @@ function HistoryRow({ item }: { item: WatchHistoryItem }) {
   const when = `${formatDate(item.watchedAt)} ${formatTime(item.watchedAt)}`;
   return (
     <Link
-      href={watchPath(item.movie.slug, item.episode.id)}
+      href={`/movies/${item.movie.slug}`}
       className="flex gap-3 rounded-card bg-raised p-3"
     >
       <span className="relative h-24 w-16 shrink-0 overflow-hidden rounded-card bg-bg">

@@ -2,6 +2,7 @@ import type { UserProfile } from "@movie/contracts";
 import { AppError } from "../common/app-error";
 import type { PrismaService } from "../prisma/prisma.service";
 import type { VideoProvider } from "../video/video-provider";
+import { drivePlaybackUrl, hlsPlaybackUrl } from "../video/drive-clips";
 import { PlaybackService, resumeAtSec } from "./playback.service";
 
 const NOW = new Date("2026-06-15T03:00:00.000Z");
@@ -48,7 +49,14 @@ function service(options: {
       episode: { findUnique, findFirst },
       watchHistory: { findUnique: history },
     } as unknown as PrismaService,
-    { getOrThrow: () => 7200 } as never,
+    {
+      getOrThrow: (key: string) => {
+        if (key === "PLAYBACK_TOKEN_TTL_SEC") return 7200;
+        if (key === "WEB_ORIGIN") return "http://localhost:3000";
+        if (key === "JWT_SECRET") return "test-secret-test-secret-test-secret";
+        throw new Error(key);
+      },
+    } as never,
     { createPlaybackUrl } as unknown as VideoProvider,
   );
   return { playback, createPlaybackUrl, findFirst, history };
@@ -117,6 +125,46 @@ describe("PlaybackService", () => {
       orderBy: [{ seasonNumber: "asc" }, { number: "asc" }],
       select: { id: true },
     });
+  });
+
+  it("returns a Drive mp4 for a mapped movie and does not ask the sample provider", async () => {
+    const ready = service({
+      episode: episode({
+        movie: { status: "PUBLISHED", ageRating: "T16", slug: "mat-ma-goc" },
+      }),
+    });
+    const body = await ready.playback.play(12, viewer, NOW);
+    const exp = Math.floor(NOW.getTime() / 1000) + 7200;
+    expect(ready.createPlaybackUrl).not.toHaveBeenCalled();
+    expect(body.hlsUrl).toBe(
+      drivePlaybackUrl(
+        "1Hg_uZQypaLZL_nHi9jR_w5xe4c2wrsR8",
+        exp,
+        "test-secret-test-secret-test-secret",
+        "http://localhost:3000",
+      ),
+    );
+    expect(body.expiresAt).toBe(new Date(exp * 1000).toISOString());
+  });
+
+  it("returns an HLS playlist for one of the five films and does not ask the sample provider", async () => {
+    const ready = service({
+      episode: episode({
+        movie: { status: "PUBLISHED", ageRating: "T16", slug: "su-thi-odyssey" },
+      }),
+    });
+    const body = await ready.playback.play(12, viewer, NOW);
+    const exp = Math.floor(NOW.getTime() / 1000) + 7200;
+    expect(ready.createPlaybackUrl).not.toHaveBeenCalled();
+    expect(body.hlsUrl).toBe(
+      hlsPlaybackUrl(
+        "1dzOYkPkJ4aAt2v-J1soh-ECvtdGuDm05",
+        exp,
+        "test-secret-test-secret-test-secret",
+        "http://localhost:3000",
+      ),
+    );
+    expect(body.hlsUrl).toContain("/index.m3u8?");
   });
 
   it("omits the resume point unless more than ten seconds were watched and thirty remain", async () => {

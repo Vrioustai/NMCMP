@@ -2,12 +2,14 @@ import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { ApiEnv } from "../config/env.schema";
 import { CloudflareStreamProvider } from "./cloudflare-stream.provider";
+import { DriveStreamController } from "./drive-stream.controller";
+import { HlsStreamController } from "./hls-stream.controller";
 import { FakeManifestController } from "./fake-manifest.controller";
 import { FakeVideoProvider } from "./fake-video.provider";
 import { VIDEO_PROVIDER, type VideoProvider } from "./video-provider";
 
 @Module({
-  controllers: [FakeManifestController],
+  controllers: [FakeManifestController, DriveStreamController, HlsStreamController],
   providers: [
     {
       provide: VIDEO_PROVIDER,

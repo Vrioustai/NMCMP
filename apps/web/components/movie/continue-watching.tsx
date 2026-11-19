@@ -6,7 +6,6 @@ import { apiClient } from "../../lib/api/client";
 import { formatDuration } from "../../lib/format";
 import type { MovieCardData } from "../../lib/movie-card";
 import { useSession } from "../../lib/session";
-import { watchPath } from "../../lib/watch-path";
 import { MovieRail } from "./movie-rail";
 
 function toHistoryCard(item: WatchHistoryItem): MovieCardData {
@@ -21,7 +20,7 @@ function toHistoryCard(item: WatchHistoryItem): MovieCardData {
     year: item.movie.releaseYear,
     rating: item.movie.ageRating,
     posterUrl: item.movie.posterUrl,
-    href: watchPath(item.movie.slug, item.episode.id),
+    href: `/movies/${item.movie.slug}`,
     meta: episode ? `${episode} · ${progress}` : progress,
   };
 }
