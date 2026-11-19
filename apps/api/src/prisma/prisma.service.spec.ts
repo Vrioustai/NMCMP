@@ -1,7 +1,12 @@
 import { loadEnvFile } from "node:process";
 import { PrismaService } from "./prisma.service";
 
-loadEnvFile();
+try {
+  loadEnvFile();
+} catch (error) {
+  const code = error instanceof Error && "code" in error ? error.code : undefined;
+  if (code !== "ENOENT") throw error;
+}
 
 describe("PrismaService", () => {
   it("connects when the module starts and disconnects when it stops", async () => {
