@@ -53,7 +53,7 @@ jobs:
       MAIL_FROM: "FilmGenZ <no-reply@filmgenz.local>"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Đọc phiên bản pnpm từ trường packageManager của package.json gốc.
       - uses: pnpm/action-setup@v4
