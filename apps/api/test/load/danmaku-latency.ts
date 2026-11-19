@@ -1,12 +1,8 @@
+import { existsSync } from "node:fs";
 import { loadEnvFile } from "node:process";
 import { io, type Socket } from "socket.io-client";
 
-try {
-  loadEnvFile();
-} catch (error) {
-  const code = error instanceof Error && "code" in error ? error.code : undefined;
-  if (code !== "ENOENT") throw error;
-}
+if (existsSync(".env")) loadEnvFile();
 
 const CONNECTIONS = readInt("CONNECTIONS", 200);
 const SAMPLES = readInt("SAMPLES", 20);

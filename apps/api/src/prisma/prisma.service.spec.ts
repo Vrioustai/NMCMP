@@ -1,12 +1,9 @@
+import { existsSync } from "node:fs";
 import { loadEnvFile } from "node:process";
 import { PrismaService } from "./prisma.service";
 
-try {
-  loadEnvFile();
-} catch (error) {
-  const code = error instanceof Error && "code" in error ? error.code : undefined;
-  if (code !== "ENOENT") throw error;
-}
+// Không có .env trên CI; DATABASE_URL đã được gán sẵn trong môi trường.
+if (existsSync(".env")) loadEnvFile();
 
 describe("PrismaService", () => {
   it("connects when the module starts and disconnects when it stops", async () => {

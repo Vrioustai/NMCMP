@@ -1,12 +1,9 @@
+import { existsSync } from "node:fs";
 import { loadEnvFile } from "node:process";
 import { Prisma, PrismaClient } from "@prisma/client";
 
-try {
-  loadEnvFile();
-} catch (error) {
-  const code = error instanceof Error && "code" in error ? error.code : undefined;
-  if (code !== "ENOENT") throw error;
-}
+// Không có .env trên CI; DATABASE_URL_TEST đã được gán sẵn trong môi trường.
+if (existsSync(".env")) loadEnvFile();
 
 const databaseUrl = process.env.DATABASE_URL_TEST;
 if (!databaseUrl) {
