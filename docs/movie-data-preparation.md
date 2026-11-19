@@ -30,7 +30,9 @@ Thư mục này đã được bỏ qua bởi Git. Không đưa file video, phụ
 
 Nên tải hoặc đồng bộ dữ liệu Drive vào một thư mục ngoài repository, ví dụ `D:\NMCMP-Movie-Assets\`, sau đó copy phim đang xử lý vào `NMCMP/data/incoming-videos/`. Cách này tránh việc Drive đồng bộ và Git cùng thao tác trong một thư mục.
 
-Khi hoàn tất kiểm tra, người phụ trách kỹ thuật sẽ upload video lên Cloudflare Stream. Sau đó chỉ `videoId` của Cloudflare được lưu vào cơ sở dữ liệu.
+Khi thư mục phim đã đúng bố cục bên dưới, chạy script nhập. Script luôn ghi phim ở trạng thái nháp, kể cả khi metadata ghi trạng thái khác. Mã video lưu vào cột `stream_uid` của tập.
+
+Máy đang đặt nhà cung cấp video giả thì script không gửi file đi đâu. Máy đặt nhà cung cấp thật thì script gọi cùng hai lệnh tải mà API dùng, và cả hai đều bật đường dẫn có chữ ký.
 
 ## Cấu trúc thư mục
 
@@ -111,7 +113,10 @@ Tạo `metadata.json` trong thư mục phim theo mẫu sau. Điền dữ liệu 
   "directors": ["Tên đạo diễn"],
   "cast": ["Diễn viên A", "Diễn viên B"],
   "ageRating": "T13",
-  "status": "PUBLISHED"
+  "source": "https://trang-goc-cua-phim",
+  "license": "Được chia sẻ cho nhóm dùng trong bản demo",
+  "trailerUrl": "https://...",
+  "videoUrl": "https://cdn.example/phim.mp4"
 }
 ```
 
@@ -153,8 +158,41 @@ Với phim bộ, đổi `type` thành `SERIES` và thêm danh sách mùa/tập:
 - [ ] Số tập trong `metadata.json` khớp file thực tế.
 - [ ] Poster/backdrop đúng phim, không bị vỡ hoặc lẫn nội dung không liên quan.
 - [ ] Phụ đề khớp thời gian và hiển thị tiếng Việt đúng.
-- [ ] Metadata không để trống `title`, `slug`, `type`, `description`, `releaseYear` và `genres`.
+- [ ] Metadata không để trống `title`, `slug`, `type`, `description`, `releaseYear`, `genres`, `source` và `license`.
+- [ ] `source` là URL trang gốc. `license` ghi điều kiện được dùng. Phim lấy từ kho `Data/` ghi đúng câu “Được chia sẻ cho nhóm dùng trong bản demo”.
 - [ ] Nhóm đã xác nhận quyền sử dụng/phân phối nội dung.
+
+`status` trong metadata, nếu có, bị bỏ qua. Script luôn nhập nháp.
+
+`videoUrl` là tùy chọn. Chỉ dùng khi file nặng hơn 200 MB và đó là link `https` tải thẳng file, không phải trang xem. Link `drive.google.com` và `docs.google.com` bị từ chối.
+
+## Chép phim từ kho Data
+
+Kho `Data/` trên Drive chưa theo bố cục của script. Mỗi thể loại nằm ở ba chỗ:
+
+- `<thể loại>/` — mỗi phim một thư mục con, bên trong là một file `.mp4`
+- `<thể loại>.js/` — metadata của các phim thuộc thể loại đó
+- `<thể loại>_poster/` — poster
+
+Chép từng phim được chọn sang một thư mục ngoài repository, theo đúng bố cục `<slug>/` ở trên: một `metadata.json`, poster thành `poster.jpg`, video thành `movie.mp4` hoặc `season-XX/episode-YY.mp4`, phụ đề tiếng Việt thành `movie.vi.vtt` hoặc `episode-YY.vi.vtt`. Điền `source`, `license`, và `trailerUrl` nếu có. Không để thư mục này trong Git.
+
+## Chạy script
+
+Từ thư mục gốc của repository:
+
+```text
+pnpm --filter @movie/api import:movies -- --dir <thư mục> [--dry-run] [--only <slug>] [--max <n>]
+```
+
+`--max` mặc định là 20. Vượt số đó thì script dừng trước khi ghi, mã thoát 3.
+
+Thứ tự an toàn: `--dry-run`, rồi `--only <slug>` cho một phim, rồi cả thư mục. `--dry-run` chỉ in, không ghi cơ sở dữ liệu và không gọi nhà cung cấp video.
+
+Cuối lần chạy in số phim tạo, số phim cập nhật, và từng phim bị bỏ qua kèm lý do. Thiếu `source` hoặc `license` thì bỏ qua phim đó.
+
+Nhật ký `import-journal.json` nằm ở thư mục người dùng `.filmgenz`, ngoài repository. Trước khi tải một tập, script ghi `IN_FLIGHT`. Có mã video thì ghi `UPLOADED`. Ghi cơ sở dữ liệu xong thì ghi `DONE`. Tập đã có `stream_uid` thì không tải lại. Gặp `IN_FLIGHT` thì cả lần chạy dừng, mã thoát 3: lần trước có thể đã gửi video mà mất câu trả lời, cần tìm theo tên `<slug>/s<mùa>e<tập>` rồi mới chạy tiếp. Gặp `UPLOADED` thì chỉ ghi mã vào cơ sở dữ liệu.
+
+Mã thoát: 0 xong; 1 lỗi trước khi ghi gì; 2 đã ghi một phần; 3 dừng vì `IN_FLIGHT` hoặc vượt `--max`.
 
 ## Bàn giao
 
@@ -164,7 +202,7 @@ Gửi cho người phụ trách kỹ thuật đường dẫn thư mục phim đ�
 NMCMP/data/incoming-videos/ten-phim-khong-dau/
 ```
 
-Không gửi video qua Git. Người phụ trách kỹ thuật sẽ kiểm tra, upload video lên Cloudflare Stream, ghi `videoId` vào hệ thống và báo lại khi phim có thể xem được.
+Không gửi video qua Git. Người phụ trách kỹ thuật chạy script nhập ở mục sau, kiểm phim nháp trên trang quản trị, rồi mới công khai.
 
 ## Quy trình làm việc với Google Drive
 

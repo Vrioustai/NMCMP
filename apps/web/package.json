@@ -10,16 +10,23 @@
   },
   "dependencies": {
     "@movie/contracts": "workspace:*",
+    "hls.js": "^1.7",
+    "lucide-react": "~1.73.0",
     "next": "^15.5",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "socket.io-client": "^4.8",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "4",
     "@types/jest": "^30",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "jest": "^30",
+    "postcss": "^8.5.33",
+    "tailwindcss": "4",
     "ts-jest": "^29.4",
     "typescript": "~5.9.0"
   }

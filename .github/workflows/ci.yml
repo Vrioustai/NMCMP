@@ -45,6 +45,12 @@ jobs:
       DATABASE_URL: postgresql://movie:movie@localhost:5432/movie_platform_test?schema=public
       DATABASE_URL_TEST: postgresql://movie:movie@localhost:5432/movie_platform_test?schema=public
       REDIS_URL: redis://localhost:6379
+      # Giá trị giả để API khởi động trong bài kiểm. Không phải khóa thật.
+      WEB_ORIGIN: http://localhost:3000
+      JWT_SECRET: ci-test-jwt-secret-at-least-32-chars
+      COOKIE_SECURE: "false"
+      FAKE_HLS_URL: https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+      MAIL_FROM: "FilmGenZ <no-reply@filmgenz.local>"
 
     steps:
       - uses: actions/checkout@v4

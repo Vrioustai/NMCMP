@@ -52,4 +52,16 @@ export default tseslint.config(
     files: ["**/*.{js,mjs,cjs}"],
     languageOptions: { globals: { process: "readonly", module: "writable", require: "readonly" } },
   },
+  {
+    files: ["apps/api/test/**/*.js"],
+    languageOptions: { globals: { __dirname: "readonly", __filename: "readonly" } },
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  {
+    files: ["tests/load/**/*.js"],
+    languageOptions: {
+      sourceType: "module",
+      globals: { __ENV: "readonly" },
+    },
+  },
 );

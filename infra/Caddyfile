@@ -1,0 +1,16 @@
+# Phim, ảnh và Danmaku đi qua API. Phần còn lại đi qua trang web.
+{$DEMO_HOST} {
+	encode gzip
+	handle /api/* {
+		reverse_proxy 127.0.0.1:4000
+	}
+	handle /media/* {
+		reverse_proxy 127.0.0.1:4000
+	}
+	handle /socket.io/* {
+		reverse_proxy 127.0.0.1:4000
+	}
+	handle {
+		reverse_proxy 127.0.0.1:3000
+	}
+}
