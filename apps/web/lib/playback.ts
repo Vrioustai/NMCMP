@@ -11,6 +11,11 @@ export function refreshDelayMs(expiresAt: string, nowMs: number): number {
   return Math.max(0, remainingMs - leadMs);
 }
 
+export function isHlsPlaylist(url: string): boolean {
+  const path = url.split("?")[0]?.toLowerCase() ?? "";
+  return path.endsWith(".m3u8") || path.endsWith("/fake-manifest");
+}
+
 export function clampProgress(seconds: number): number | null {
   if (!Number.isFinite(seconds) || seconds <= 0) return null;
   return Math.min(86400, Math.floor(seconds));

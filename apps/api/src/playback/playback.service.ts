@@ -6,6 +6,12 @@ import { AppError } from "../common/app-error";
 import { Clock } from "../common/clock";
 import type { ApiEnv } from "../config/env.schema";
 import { PrismaService } from "../prisma/prisma.service";
+import {
+  driveFileIdForSlug,
+  drivePlaybackUrl,
+  hlsFileIdForSlug,
+  hlsPlaybackUrl,
+} from "../video/drive-clips";
 import { VIDEO_PROVIDER, type VideoProvider } from "../video/video-provider";
 
 const RESUME_MIN_PROGRESS_SEC = 10;
@@ -24,11 +30,17 @@ export class PlaybackService {
       birthYear: user.birthYear,
       year: new Clock(now).year(),
     });
-    if (!episode.streamUid) throw new AppError("NOT_FOUND");
+    const driveFileId = driveFileIdForSlug(episode.movie.slug);
+    const hlsFileId = hlsFileIdForSlug(episode.movie.slug);
+    if (!episode.streamUid && !driveFileId) throw new AppError("NOT_FOUND");
 
     const ttl = this.config.getOrThrow("PLAYBACK_TOKEN_TTL_SEC");
     const [link, history, next] = await Promise.all([
-      this.video.createPlaybackUrl(episode.streamUid, ttl),
+      hlsFileId
+        ? Promise.resolve(this.hlsLink(hlsFileId, ttl, now))
+        : driveFileId
+          ? Promise.resolve(this.driveLink(driveFileId, ttl, now))
+          : this.video.createPlaybackUrl(episode.streamUid as string, ttl),
       this.prisma.watchHistory.findUnique({
         where: { userId_episodeId: { userId: user.id, episodeId } },
         select: { progressSec: true },
@@ -54,6 +66,32 @@ export class PlaybackService {
       subtitles: episode.subtitles.map(toTrack),
       ...(resume === undefined ? {} : { resumeAtSec: resume }),
       nextEpisodeId: next?.id ?? null,
+    };
+  }
+
+  private hlsLink(fileId: string, ttlSec: number, now: Date) {
+    const exp = Math.floor(now.getTime() / 1000) + ttlSec;
+    return {
+      hlsUrl: hlsPlaybackUrl(
+        fileId,
+        exp,
+        this.config.getOrThrow("JWT_SECRET"),
+        this.config.getOrThrow("WEB_ORIGIN"),
+      ),
+      expiresAt: new Date(exp * 1000),
+    };
+  }
+
+  private driveLink(fileId: string, ttlSec: number, now: Date) {
+    const exp = Math.floor(now.getTime() / 1000) + ttlSec;
+    return {
+      hlsUrl: drivePlaybackUrl(
+        fileId,
+        exp,
+        this.config.getOrThrow("JWT_SECRET"),
+        this.config.getOrThrow("WEB_ORIGIN"),
+      ),
+      expiresAt: new Date(exp * 1000),
     };
   }
 }

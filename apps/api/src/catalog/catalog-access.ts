@@ -41,7 +41,7 @@ export async function requireWatchableEpisode(
   const episode = await prisma.episode.findUnique({
     where: { id: episodeId },
     include: {
-      movie: { select: { status: true, ageRating: true } },
+      movie: { select: { status: true, ageRating: true, slug: true } },
       subtitles: {
         orderBy: { language: "asc" },
         select: { language: true, url: true },

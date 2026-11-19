@@ -73,7 +73,10 @@ export function MovieRail({
           </div>
         ) : null}
       </div>
-      <div ref={scroller} className="flex snap-x gap-3 overflow-x-auto lg:gap-4">
+      <div
+        ref={scroller}
+        className="flex snap-x gap-3 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] lg:gap-4 [&::-webkit-scrollbar]:hidden"
+      >
         {movies.map((movie) => (
           <div key={movie.id} className="w-36 shrink-0 snap-start sm:w-40">
             <MovieCard {...movie} />
