@@ -20,7 +20,7 @@
     "@movie/contracts": "workspace:*",
     "@nestjs/common": "^11",
     "@nestjs/config": "^4",
-    "@nestjs/core": "^11",
+    "@nestjs/core": "^12",
     "@nestjs/jwt": "^11",
     "@nestjs/platform-express": "^11",
     "@nestjs/platform-socket.io": "^11",
